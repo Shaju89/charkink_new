@@ -98,6 +98,25 @@ prev_hammer_15m_green = lambda x:'scan_clause: ( {57960}'+'( [={0}] 15 minute cl
 
 def run_scanner():
     clear_intraday_candles()
+        
+    time_now = datetime.now(timezone.utc).strftime("%H:%M:%S")
+    time_exp = data['Request']['exp_time']
+    # Parse the given time string into a datetime object
+    given_time_format = "%d-%m-%Y-%H:%M:%S"
+    exp_time = datetime.strptime(time_exp, given_time_format)
+
+    # Get the current GMT time and parse it into a datetime object
+    current_gmt_time_str = datetime.now(timezone.utc).strftime(given_time_format)
+    current_gmt_time = datetime.strptime(current_gmt_time_str, given_time_format)
+
+    if exp_time <= current_gmt_time:
+        print(f'{exp_time=}')
+        print(f"{current_gmt_time=}")
+        print('updating cookie ....')
+        update_chartink_cookie()
+    else:
+        print("Cookie hasn't been expired yet")
+
     with open('./ChartInkCookie.yaml') as fh:
         data = yaml.load(fh, Loader=yaml.Loader)
 
